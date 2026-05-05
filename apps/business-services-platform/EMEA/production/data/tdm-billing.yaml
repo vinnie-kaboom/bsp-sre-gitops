@@ -1,0 +1,33 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: tdm-billing-on-boarding
+  namespace: data
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: ./helm/bsp-applications
+      sourceRef:
+        kind: GitRepository
+        name: ghe-on-board-helm
+        namespace: data
+      interval: 5m
+  ## Values overridden for this deployment
+  values:
+    namespace: data
+    releaseName: tdm-billing-emea
+    applicationName: tdm-billing
+    gitRepo:
+      repoName: tdm-billing-config
+      ref:
+        branch: emea-prd-env-config
+      secretRef:
+        name: ghe-repository-auth
+      orgName: ncrvoyix-bsp
+    helmRelease:
+      valuesFiles:
+        - helm/tdm-billing/values.yaml
+        - helm/tdm-billing/overrides/emea-prd.yaml
+    alert:
+      channel: bsp-prd-flux-applications

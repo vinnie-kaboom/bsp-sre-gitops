@@ -1,0 +1,33 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: apims-analytics-onboarding
+  namespace: dev-apims
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: ./helm/bsp-applications
+      sourceRef:
+        kind: GitRepository
+        name: ghe-on-board-helm
+        namespace: dev-apims
+      interval: 5m
+  # Values overridden for this deployment
+  values:
+    namespace: dev-apims
+    releaseName: analytics-a6gy8u4
+    applicationName: analytics
+    gitRepo:
+      repoName: apims-analytics-config
+      ref:
+        branch: namer-dev
+      secretRef:
+        name: ghe-repository-auth
+      orgName: ncrvoyix-bsp
+    helmRelease:
+      valuesFiles:
+        - helm/analytics/values.yaml
+        - helm/analytics/overrides/namer-dev.yaml
+    alert:
+      channel: apims-analytics-gitops

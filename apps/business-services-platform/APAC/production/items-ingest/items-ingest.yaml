@@ -1,0 +1,34 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: items-ingest-on-boarding
+  namespace: items-ingest
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: ./helm/bsp-applications
+      sourceRef:
+        kind: GitRepository
+        name: ghe-on-board-helm
+        namespace: items-ingest
+      interval: 5m
+  ## Values overridden for this deployment
+  values:
+    namespace: items-ingest
+    releaseName: items-ingest
+    applicationName: items-ingest
+    gitRepo:
+      repoName: items-ingest-config
+      ref:
+        branch: apac-prd
+      secretRef:
+        name: ghe-repository-auth
+      orgName: ncrvoyix-bsp
+    helmRelease:
+      timeout: 15m
+      valuesFiles:
+        - helm/items-ingest/values.yaml
+        - helm/items-ingest/overrides/apac-prd.yaml
+    alert:
+      channel: catalog-gitops

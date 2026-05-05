@@ -1,0 +1,35 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: order-billing-on-boarding
+  namespace: ordering
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: ./helm/bsp-applications
+      sourceRef:
+        kind: GitRepository
+        name: ghe-on-board-helm
+        namespace: ordering
+      interval: 5m
+  ## Values overridden for this deployment
+  values:
+    namespace: ordering
+    releaseName: order-billing-apac-prd
+    applicationName: order-billing
+    gitRepo:
+      repoName: order-billing-config
+      ref:
+        branch: apac-prd
+      secretRef:
+        name: ghe-repository-auth
+      orgName: ncrvoyix-bsp
+    helmRelease:
+      valuesFiles:
+        - helm/order-billing/values.yaml
+        - helm/order-billing/overrides/apac-prd.yaml
+    alert:
+      channel:
+        - bsp-apac-prd-flux-applications
+        - hoth-flux-prd-apac

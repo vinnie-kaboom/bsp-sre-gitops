@@ -1,0 +1,35 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: apims-simulator-onboarding
+  namespace: prd-apims
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: ./helm/bsp-applications
+      sourceRef:
+        kind: GitRepository
+        name: ghe-on-board-helm
+        namespace: prd-apims
+      interval: 5m
+  ## Values overridden for this deployment
+  values:
+    namespace: prd-apims
+    releaseName: simulator-lipovfn
+    applicationName: simulator
+    gitRepo:
+      repoName: apims-simulator-config
+      ref:
+        branch: napac-prd
+      secretRef:
+        name: ghe-repository-auth
+      orgName: ncrvoyix-bsp
+    helmRelease:
+      valuesFiles:
+        - helm/simulator/values.yaml
+        - helm/simulator/overrides/napac/napac-prod.yaml
+    alert:
+      channel:
+        - apims-simulator-gitops
+        - bsp-napac-prd-flux-applications

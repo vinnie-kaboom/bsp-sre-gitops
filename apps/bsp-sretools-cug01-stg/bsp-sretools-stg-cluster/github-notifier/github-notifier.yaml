@@ -1,0 +1,32 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: github-notifier-on-boarding
+  namespace: github-notifier-stg
+spec:
+  interval: 2m
+  chart:
+    spec:
+      chart: ./helm/bsp-applications
+      sourceRef:
+        kind: GitRepository
+        name: on-board-helm
+        namespace: github-notifier-stg
+      interval: 1m
+      
+  values:
+    namespace: github-notifier-stg
+    releaseName: github-notifier
+    applicationName: github-notifier
+
+    alert: 
+      enabled: false
+
+    gitRepo:
+      repoName: github-notifier-config
+      ref:
+        branch: stg-env-config
+    helmRelease:
+      valuesFiles:
+        - helm/github-notifier/values.yaml
+        - helm/github-notifier/overrides/github-notifier-stg.yaml

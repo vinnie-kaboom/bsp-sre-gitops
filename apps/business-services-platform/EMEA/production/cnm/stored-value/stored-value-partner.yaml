@@ -1,0 +1,34 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: stored-value-partner-on-boarding
+  namespace: cnm
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: ./helm/bsp-applications
+      sourceRef:
+        kind: GitRepository
+        name: ghe-on-board-helm
+        namespace: cnm
+      interval: 5m
+  ## Values overridden for this deployment
+  values:
+    namespace: cnm
+    releaseName: stored-value-partner-emea-prd
+    applicationName: stored-value-partner
+    gitRepo:
+      repoName: stored-value-config
+      ref:
+        branch: emea-prd
+      secretRef:
+        name: ghe-repository-auth
+      orgName: ncrvoyix-bsp
+    helmRelease:
+      valuesFiles:
+        - helm/stored-value-partner/values.yaml
+        - helm/stored-value-partner/overrides/values-emea-prod.yaml
+      timeout: 15m
+    alert:
+      channel: bsp-emea-prd-flux-applications

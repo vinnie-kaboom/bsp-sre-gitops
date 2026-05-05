@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: prd-apims
+resources:
+  - ../../../../../common-resources/default/certs/ncrcloud
+  - ../../../../../common-resources/default/github
+  - ../../../../../common-resources/default/slack
+  - namespace.yaml
+  - api-launch.yaml
+  - entitlements.yaml
+  - teams.yaml
+  - auditing.yaml
+  - bsp-security-proxy.yaml
+  - analytics.yaml
+  - simulator.yaml
+  - export-data.yaml
