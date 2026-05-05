@@ -1,0 +1,28 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: messaging
+resources:
+- ../../../../../common-resources/default/github
+#Core - For Test Only
+- core-test-509.yaml
+- test-asm-600.yaml
+- test-asm-507-test.yaml
+- test-asm-601.yaml
+- test-asm-beta.yaml
+
+#CNM deployment:
+- cnm-600.yaml
+
+#Items deployments:
+
+#TDM deployments:
+
+#Hoth deployments:
+
+
+bases:
+- ../../../../../common-resources/default/gateway
+
+patchesStrategicMerge:
+- gateway.yaml

@@ -1,0 +1,75 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: order-publish-on-boarding
+  namespace: ordering
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: ./helm/bsp-applications
+      sourceRef:
+        kind: GitRepository
+        name: ghe-on-board-helm
+        namespace: ordering
+      interval: 5m
+  ## Values overriden for this deployment
+  values:
+    namespace: ordering
+    releaseName: order-publish-apac-prd
+    applicationName: order-publish
+    gitRepo:
+      repoName: order-config
+      ref:
+        branch: apac-prd
+      secretRef:
+        name: ghe-repository-auth
+      orgName: ncrvoyix-bsp
+    helmRelease:
+      timeout: 30m
+      valuesFiles:
+        - helm/order-publish/values.yaml
+        - helm/order-publish/overrides/apac-prd.yaml
+    alert:
+      channel:
+        - bsp-apac-prd-flux-applications
+        - hoth-flux-prd-apac
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: order-on-boarding
+  namespace: ordering
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: ./helm/bsp-applications
+      sourceRef:
+        kind: GitRepository
+        name: ghe-on-board-helm
+        namespace: ordering
+      interval: 5m
+  dependsOn:
+    - name: order-publish
+  ## Values overriden for this deployment
+  values:
+    namespace: ordering
+    releaseName: order-apac-prd
+    applicationName: order
+    gitRepo:
+      repoName: order-config
+      ref:
+        branch: apac-prd
+      secretRef:
+        name: ghe-repository-auth
+      orgName: ncrvoyix-bsp
+    helmRelease:
+      timeout: 10m
+      valuesFiles:
+        - helm/order/values.yaml
+        - helm/order/overrides/apac-prd.yaml
+    alert:
+      channel:
+        - bsp-apac-prd-flux-applications
+        - hoth-flux-prd-apac

@@ -1,0 +1,33 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: users-on-boarding
+  namespace: users-namer-sandbox
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: ./helm/bsp-applications
+      sourceRef:
+        kind: GitRepository
+        name: ghe-on-board-helm
+        namespace: users-namer-sandbox
+      interval: 5m
+## Values overridden for this deployment
+  values:
+    namespace: users-namer-sandbox
+    releaseName: users
+    applicationName: users
+    gitRepo:
+      repoName: core-config
+      ref:
+        branch: users-namer-sandbox
+      secretRef:
+        name: ghe-repository-auth
+      orgName: ncrvoyix-bsp  
+    helmRelease:
+      valuesFiles:
+        - helm/users/values.yaml
+        - helm/users/overrides/namer-sandbox.yaml
+    alert:
+      channel: core-gitops

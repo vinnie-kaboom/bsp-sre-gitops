@@ -1,0 +1,33 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: promotion-execution-mock-adapter-on-boarding
+  namespace: cnm
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: ./helm/bsp-applications
+      sourceRef:
+        kind: GitRepository
+        name: ghe-on-board-helm
+        namespace: cnm
+      interval: 5m
+  ## Values overridden for this deployment
+  values:
+    namespace: cnm
+    releaseName: promotion-execution-mock-adapter-emea-prd
+    applicationName: promotion-execution-mock-adapter
+    gitRepo:
+      repoName: promotion-execution-config
+      ref:
+        branch: emea-prd
+      secretRef:
+        name: ghe-repository-auth
+      orgName: ncrvoyix-bsp
+    helmRelease:
+      valuesFiles:
+        - helm/promotion-execution-mock-adapter/values.yaml
+        - helm/promotion-execution-mock-adapter/overrides/values-emea-prod.yaml
+    alert:
+      channel: bsp-emea-prd-flux-applications

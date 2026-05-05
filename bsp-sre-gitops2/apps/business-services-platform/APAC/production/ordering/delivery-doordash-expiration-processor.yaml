@@ -1,0 +1,35 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: delivery-doordash-expiration-processor-on-boarding
+  namespace: ordering
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: ./helm/bsp-applications
+      sourceRef:
+        kind: GitRepository
+        name: ghe-on-board-helm
+        namespace: ordering
+      interval: 5m
+  ## Values overridden for this deployment
+  values:
+    namespace: ordering
+    releaseName: delivery-doordash-expiration-processor-apac-prd
+    applicationName: delivery-doordash-expiration-processor
+    gitRepo:
+      repoName: delivery-doordash-expiration-processor-config
+      ref:
+        branch: apac-prd
+      secretRef:
+        name: ghe-repository-auth
+      orgName: ncrvoyix-bsp
+    helmRelease:
+      valuesFiles:
+        - helm/delivery-doordash-expiration-processor/values.yaml
+        - helm/delivery-doordash-expiration-processor/overrides/apac-prd.yaml
+    alert:
+      channel:
+        - bsp-apac-prd-flux-applications
+        - hoth-flux-prd-apac

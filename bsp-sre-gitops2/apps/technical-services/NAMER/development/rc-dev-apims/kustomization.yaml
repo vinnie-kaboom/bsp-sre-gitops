@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: rc-dev-apims
+resources:
+  - ../../../../../common-resources/default/certs/ncrcloud
+  - ../../../../../common-resources/default/github
+  - ../../../../../common-resources/default/slack
+  - api-launch.yaml
+  - api-launch-v2.yaml
+  - namespace.yaml
+  - bsp-security-proxy.yaml
+  - entitlements.yaml
+  

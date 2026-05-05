@@ -1,0 +1,18 @@
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: platform-client
+spec:
+  refreshInterval: 10m
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: es-cluster-secret-store
+  data:
+    - secretKey: SHARED_KEY
+      remoteRef:
+        key: core-namer-sandbox-platform-client-shared-key
+        version: latest
+    - secretKey: SECRET_KEY
+      remoteRef:
+        key: core-namer-sandbox-platform-client-secret-key
+        version: latest

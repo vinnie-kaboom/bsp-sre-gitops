@@ -1,0 +1,34 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: journaling-on-boarding
+  namespace: journaling-apac-prd
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: ./helm/bsp-applications
+      sourceRef:
+        kind: GitRepository
+        name: ghe-on-board-helm
+        namespace: journaling-apac-prd
+      interval: 5m
+  ## Values overridden for this deployment
+  values:
+    namespace: journaling-apac-prd
+    releaseName: journaling
+    applicationName: nep-journaling
+    gitRepo:
+      repoName: nep-journaling-config
+      ref:
+        branch: apac-prd
+      secretRef:
+        name: ghe-repository-auth
+      orgName: ncrvoyix-bsp
+    helmRelease:
+      timeout: 55m
+      valuesFiles:
+        - helm/nep-journaling/values.yaml
+        - helm/nep-journaling/overrides/apac-prd.yaml
+    alert:
+      channel: core-gitops

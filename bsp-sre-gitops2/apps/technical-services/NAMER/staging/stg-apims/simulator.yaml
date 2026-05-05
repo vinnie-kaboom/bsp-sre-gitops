@@ -1,0 +1,34 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: apims-simulator-onboarding
+  namespace: stg-apims
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: ./helm/bsp-applications
+      sourceRef:
+        kind: GitRepository
+        name: ghe-on-board-helm
+        namespace: stg-apims
+      interval: 5m
+  ## Values overridden for this deployment
+  values:
+    namespace: stg-apims
+    releaseName: simulator
+    applicationName: simulator
+    gitRepo:
+      repoName: apims-simulator-config
+      ref:
+        branch: namer-rc-stg
+      secretRef:
+        name: ghe-repository-auth
+      orgName: ncrvoyix-bsp          
+    helmRelease:
+      valuesFiles:
+        - helm/simulator/values.yaml
+        - helm/simulator/overrides/rc/rc-stg.yaml
+
+    alert:
+      channel: apims-simulator-gitops

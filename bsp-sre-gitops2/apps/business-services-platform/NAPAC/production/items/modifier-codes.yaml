@@ -1,0 +1,33 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: modifier-codes-on-boarding
+  namespace: items
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: ./helm/bsp-applications
+      sourceRef:
+        kind: GitRepository
+        name: ghe-on-board-helm
+        namespace: items
+      interval: 5m
+  ## Values overridden for this deployment
+  values:
+    namespace: items
+    releaseName: modifier-codes-prd-napac
+    applicationName: modifier-codes
+    gitRepo:
+      repoName: modifier-codes-config
+      ref:
+        branch: napac-prd-env-config
+      secretRef:
+        name: ghe-repository-auth
+      orgName: ncrvoyix-bsp
+    helmRelease:
+      valuesFiles:
+        - helm/modifier-codes/values.yaml
+        - helm/modifier-codes/overrides/apigee-napac-prd.yaml
+    alert:
+      channel: bsp-napac-prd-flux-applications

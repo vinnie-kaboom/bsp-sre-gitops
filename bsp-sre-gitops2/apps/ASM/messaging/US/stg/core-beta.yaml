@@ -1,0 +1,34 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: core-asm-beta-on-boarding
+  namespace: messaging
+spec:
+  interval: 5m
+  timeout: 15m
+  chart:
+    spec:
+      # Chart: https://github.com/ncr-bsp/bsp-sre-gitops/tree/on-board-helm-submodules/helm/bsp-messaging
+      chart: ./helm/bsp-messaging
+      sourceRef:
+        kind: GitRepository
+        name: on-board-helm-submodules
+        namespace: messaging
+      interval: 1m
+  values:
+    releaseNamePostfix: core-beta600
+    gitRepo:
+      repoName: messaging-core-test-config
+      helmBaseDirectory: messaging/build/core/helm
+      ref:
+        branch: namer-staging-beta
+    region: us
+    environment: staging
+    coreAppName: test-asm
+    helmRelease:
+      valuesFiles:
+        - messaging/build/core/helm/messaging-gcp/values.yaml
+        - messaging/build/core/helm/messaging-gcp/overrides/us-staging.yaml
+        - helm/overrides/business-services-platform-stg.yaml
+    alert:
+      channel: core-gitops
