@@ -1,0 +1,33 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: apims-analytics-onboarding
+  namespace: prd-apims
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: ./helm/bsp-applications
+      sourceRef:
+        kind: GitRepository
+        name: ghe-on-board-helm
+        namespace: prd-apims
+      interval: 5m
+  # Values overridden for this deployment
+  values:
+    namespace: prd-apims
+    releaseName: analytics-hjar3u0
+    applicationName: analytics
+    gitRepo:
+      repoName: apims-analytics-config
+      ref:
+        branch: apac-prd
+      secretRef:
+        name: ghe-repository-auth
+      orgName: ncrvoyix-bsp
+    helmRelease:
+      valuesFiles:
+        - helm/analytics/values.yaml
+        - helm/analytics/overrides/apac-prd.yaml
+    alert:
+      channel: apims-analytics-gitops

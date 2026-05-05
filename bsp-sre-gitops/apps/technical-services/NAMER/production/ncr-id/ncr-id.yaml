@@ -1,0 +1,34 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: ncr-id-onboarding
+  namespace: ncr-id
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: ./helm/bsp-applications
+      sourceRef:
+        kind: GitRepository
+        name: ghe-on-board-helm
+        namespace: ncr-id
+      interval: 5m
+  ## Values overridden for this deployment
+  values:
+    namespace: ncr-id
+    releaseName: ncr-id
+    applicationName: ncr-id
+    gitRepo:
+      repoName: ncr-id-config
+      ref:
+        branch: namer-prd
+      secretRef:
+        name: ghe-repository-auth
+      orgName: ncrvoyix-bsp
+    helmRelease:
+      timeout: 10m # Needed to give cloud functions time to deploy
+      valuesFiles:
+        - helm/ncr-id/values.yaml
+        - helm/ncr-id/overrides/namer-prd.yaml
+    alert:
+      channel: bsp-prd-flux-applications

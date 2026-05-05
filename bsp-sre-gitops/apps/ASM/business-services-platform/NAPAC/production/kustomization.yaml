@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ../../../../../common-resources/default/gateway
+
+#Patches to be applied to the default gateway.
+patches:
+ - target:
+      group: networking.istio.io
+      version: v1beta1
+      kind: Gateway
+      name: gateway
+   path: gateway-patch.yaml

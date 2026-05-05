@@ -1,0 +1,8 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: argus
+resources:
+- ../../../../common-resources/default/github
+- ../../../../common-resources/default/slack
+- ../../../../common-resources/default/certs/ncrcloud
+- helm-release.yaml

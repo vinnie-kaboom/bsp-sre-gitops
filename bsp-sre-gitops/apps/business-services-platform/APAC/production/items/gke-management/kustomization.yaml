@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../../../../../common-resources/gke-management/default-service-account/secrets-management
+  - ../../../../../../common-resources/gke-management/default-service-account/cluster-role
+
+patchesStrategicMerge:
+  - secrets-management-role-binding.yaml
+  - serviceaccount-clusterrolebinding.yaml
+patches:
+  - target:
+      kind: ClusterRoleBinding
+      name: serviceaccount-clusterrolebinding
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: serviceaccount-clusterrolebinding-items

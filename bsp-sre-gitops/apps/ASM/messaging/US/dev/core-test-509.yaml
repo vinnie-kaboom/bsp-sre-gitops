@@ -1,0 +1,99 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: core-messaging-5.0.9-on-boarding
+  namespace: messaging
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: ./helm/bsp-messaging
+      sourceRef:
+        kind: GitRepository
+        name: ghe-on-board-helm #This needs to be created or files moved into on-board-helm
+        namespace: messaging
+      interval: 1m
+  ## Values overridden for this deployment
+  values:
+    releaseNamePostfix: &releaseNamePostfix core509
+    gitRepo:
+      repoName: messaging
+      ref:
+        tag: 5.0.9
+      secretRef:
+        name: ghe-repository-auth
+      orgName: ncrvoyix-bsp
+    region: us
+    environment: dev
+    coreAppName: &coreAppName core-test
+    helmRelease:
+      valuesFiles:
+        - build/core/helm/messaging-gcp/values.yaml
+      values:
+        api:
+          limits:
+            maxCpu: 1250m
+            maxMemory: 1536Mi
+            minCpu: 256m
+            minMemory: 128Mi
+          scaling:
+            averageCpu: 750m
+            averageMemory: 1200Mi
+            maxReplicas: 24
+            minReplicas: 3
+        app:
+          coreEnvironment: dev
+          coreRegion: us
+          messagingRelease: 5.0.9
+          coreAppName: *coreAppName
+          deployVersion: *releaseNamePostfix
+        env:
+          CORE_PROJECT_ID: business-services-platform-dev
+          DB_HOST: 127.0.0.1
+          GATEWAY_URL: https://ncrdev-dev.apigee.net
+          GCP_REGION: us-central1
+          REDIS_PORT: 6378
+          REDIS_IP: 10.248.3.180
+          API_URL:
+            GATEWAY: https://msg-gtw-dev.ncrcloud.com
+          SHARED_PROJECT_ID: technical-services-dev
+        processor:
+          limits:
+            maxCpu: 1250m
+            maxMemory: 1536Mi
+            minCpu: 256m
+            minMemory: 512Mi
+          scaling:
+            averageCpu: 750m
+            averageMemory: 1200Mi
+            maxReplicas: 60
+            minReplicas: 9
+        virtualService:
+          gateways:
+            - messaging/gateway
+          hosts:
+            - msg-gtw-dev.ncrcloud.com
+          uriRewrite: "/"
+        gsm:
+          secretNames:
+            DB_PASSWORD: msg-core-test-db-secret
+            MSG_GKE_SA: msg-gke-sa-key-secret
+            MSG_DEPLOYER_SA: msg-deployer-key-secret
+            QUEUE_NAME_SUFFIX: msg-core-test-queue-name-suffix-secret
+            REDIS_HOST: msg-core-test-redis-host-secret
+            RETRY_QUEUE_COUNT: msg-core-test-retry-queue-count-secret
+            DB_INSTANCE_NAME: msg-core-test-db-instance-name-secret
+            DB_INSTANCE_GCP_REGION: msg-core-test-db-instance-region-secret
+            GATEWAY_SHARED_KEY: msg-core-test-gateway-shared-key
+            GATEWAY_SECRET_KEY: msg-core-test-gateway-secret-key
+            TEST_DATA_TOKEN_SHARED_KEY: msg-test-data-token-shared-key
+            TEST_DATA_TOKEN_SECRET_KEY: msg-test-data-token-secret-key
+            TEST_DATA_TOKEN_ORG: msg-core-test-test-data-token-org
+            ENCRYPTION_KEY_V1: msg-core-test-db-encrypt-key-secret-v1
+            ENCRYPTION_KEY_V2: msg-core-test-db-encrypt-key-secret-v2
+            ENCRYPTION_KEY_V3: msg-core-test-db-encrypt-key-secret-v3
+            SIGNING_KEY_V1: msg-core-test-signed-message-secret-v1
+            SIGNING_KEY_V2: msg-core-test-signed-message-secret-v2
+
+    alert:
+      channel: core-gitops

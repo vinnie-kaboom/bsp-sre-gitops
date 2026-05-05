@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: ordering
+resources:
+  - ../../../../../common-resources/default/github
+  - ../../../../../common-resources/default/slack
+  - namespace.yaml
+  - site.yaml
+  - order-billing.yaml
+  - delivery-doordash.yaml
+  - delivery-mock.yaml
+  - fulfillment-time.yaml
+  - delivery.yaml
+  - order-monitor.yaml
+  - order.yaml
+  - order-support-ui.yaml
+  - delivery-expiration-processor.yaml
+  - delivery-doordash-expiration-processor.yaml
+  - order-expiration-processor.yaml
+  - order-history.yaml

@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - core-apac-prd
+  - journaling-apac-prd
+  - notifications-apac-prd
+  - prd-apims
+  - users-apac-prd
+  - messaging-health-monitor-apac-prd
+  - applications-apac-prd
+  - flagger
