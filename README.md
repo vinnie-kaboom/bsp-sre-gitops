@@ -1,5 +1,5 @@
 # ncr-gitops
-'''
+```
 bsp-sre-gitops/
 ├── apps
 │   ├── ASM
@@ -1024,4 +1024,4 @@ bsp-sre-gitops/
 │       ├── certs
 │       └── envoy-jwt-extraction
 └── renovate.json
-'''
+```
