@@ -1,7 +1,0 @@
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: ncr-id-test
-  labels:
-    istio.io/rev: asm-managed-stable

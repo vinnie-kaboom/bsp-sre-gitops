@@ -1,4 +1,0 @@
-- op: replace #Adding to the default gateway
-  path: /spec/servers/0/hosts #A new host
-  value:
-    - 'bsl-gtw-stg.ncrcloud.com'

@@ -1,6 +1,0 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: rc-dev-apims
-  labels:
-    istio.io/rev: asm-managed-stable
